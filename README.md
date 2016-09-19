@@ -1,0 +1,2 @@
+# alerta-mailer
+Alerta mailer
