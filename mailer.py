@@ -513,7 +513,7 @@ def main():
     group_rules = parse_group_rules(config_file)
     if group_rules is not None:
         OPTIONS['group_rules'] = group_rules
-    if OPTIONS['api_rules_url']:
+    if OPTIONS['api_rules_url'] and OPTIONS['api_rules_url'].startswith('http'):
         OPTIONS['api_rules'] = {
             'url': OPTIONS['api_rules_url'],
             'last_updated': 0,
