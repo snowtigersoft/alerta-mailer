@@ -270,7 +270,10 @@ class MailSender(threading.Thread):
                 for rule in OPTIONS['api_rules']['rules']:
                     if rule['error_code'] == alert['value'] and \
                             isinstance(rule['emails'], list) and len(rule['emails']) > 0:
-                        contacts.extend(rule['emails'])
+                        new_contacts = [x.strip() for x in rule['emails']
+                                        if x.strip() and x.strip() not in contacts]
+                        if len(new_contacts) > 0:
+                            contacts.extend(new_contacts)
 
         if len(contacts) == 0:
             LOG.info('Contacts is empty')
@@ -495,7 +498,7 @@ def main():
             int: config.getint,
             float: config.getfloat,
             bool: config.getboolean,
-            list: lambda s, o: [e.strip() for e in config.get(s, o).split(',')]
+            list: lambda s, o: [e.strip() for e in config.get(s, o).split(',') if e.strip()]
         }
         for opt in DEFAULT_OPTIONS:
             # Convert the options to the expected type
