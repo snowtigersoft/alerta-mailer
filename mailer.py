@@ -263,7 +263,7 @@ class MailSender(threading.Thread):
 
         if 'api_rules' in OPTIONS:
             if time.time() - 3600 > OPTIONS['api_rules']['last_updated']:
-                OPTIONS['api_rules']['rules'] = load_api_rules(OPTIONS['url'])
+                OPTIONS['api_rules']['rules'] = load_api_rules(OPTIONS['api_rules']['url'])
                 OPTIONS['api_rules']['last_updated'] = time.time()
             if len(OPTIONS['api_rules']['rules']) > 0:
                 LOG.debug('Checking %d api rules' % len(OPTIONS['api_rules']['rules']))
@@ -513,6 +513,7 @@ def main():
     if os.environ.get('DEBUG'):
         OPTIONS['debug'] = True
 
+    OPTIONS['mail_to'] = [m for m in OPTIONS['mail_to'] if m and m != 'not-set']
     group_rules = parse_group_rules(config_file)
     if group_rules is not None:
         OPTIONS['group_rules'] = group_rules
