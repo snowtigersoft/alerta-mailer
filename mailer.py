@@ -268,7 +268,7 @@ class MailSender(threading.Thread):
             if len(OPTIONS['api_rules']['rules']) > 0:
                 LOG.debug('Checking %d api rules' % len(OPTIONS['api_rules']['rules']))
                 for rule in OPTIONS['api_rules']['rules']:
-                    if rule['error_code'] == alert['value'] and \
+                    if rule['error_code'] == alert.value and \
                             isinstance(rule['emails'], list) and len(rule['emails']) > 0:
                         new_contacts = [x.strip() for x in rule['emails']
                                         if x.strip() and x.strip() not in contacts]
