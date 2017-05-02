@@ -263,8 +263,10 @@ class MailSender(threading.Thread):
 
         if 'api_rules' in OPTIONS:
             if time.time() - 3600 > OPTIONS['api_rules']['last_updated']:
-                OPTIONS['api_rules']['rules'] = load_api_rules(OPTIONS['api_rules']['url'])
-                OPTIONS['api_rules']['last_updated'] = time.time()
+                rules = load_api_rules(OPTIONS['api_rules']['url'])
+                if rules:
+                    OPTIONS['api_rules']['rules'] = rules
+                    OPTIONS['api_rules']['last_updated'] = time.time()
             if len(OPTIONS['api_rules']['rules']) > 0:
                 LOG.debug('Checking %d api rules' % len(OPTIONS['api_rules']['rules']))
                 for rule in OPTIONS['api_rules']['rules']:
@@ -449,19 +451,22 @@ def parse_group_rules(config_file):
 
 
 def load_api_rules(url):
-    LOG.debug('Load api urls from %s' % url)
-    response = requests.get(url)
-
-    LOG.debug('Request Headers: %s', response.request.headers)
-    LOG.debug('Response Headers: %s', response.headers)
-    LOG.debug('Response Body: %s', response.text)
-
     try:
-        response.raise_for_status()
-    except requests.HTTPError:
-        raise
+        LOG.debug('Load api urls from %s' % url)
+        response = requests.get(url)
 
-    return response.json()
+        LOG.debug('Request Headers: %s', response.request.headers)
+        LOG.debug('Response Headers: %s', response.headers)
+        LOG.debug('Response Body: %s', response.text)
+
+        try:
+            response.raise_for_status()
+        except requests.HTTPError:
+            raise
+
+        return response.json()
+    except Exception as e:
+        LOG.error('Load api urls error:', e.message)
 
 
 def main():
